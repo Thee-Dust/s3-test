@@ -1,3 +1,5 @@
+name: Build and Deploy
+
 on:
   push:
     branches:
@@ -23,9 +25,10 @@ jobs:
         run: npm run build
 
       - name: Deploy to S3
-        uses: aws-actions/aws-cli@v2
+        uses: jakejarvis/aws-cli-action@1.2.0
         with:
           args: s3 sync build/ s3://test-static-site-s3-bucket/ --delete
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: us-east-2

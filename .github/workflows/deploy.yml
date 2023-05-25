@@ -1,4 +1,4 @@
-name: Deploy on Merge to Main
+name: Build and Deploy
 
 on:
   push:
@@ -6,23 +6,6 @@ on:
       - main
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build the React app
-        run: npm run build
   deploy:
     runs-on: ubuntu-latest
 
@@ -42,10 +25,10 @@ jobs:
         run: npm run build
 
       - name: Deploy to S3
-        uses: jakejarvis/s3-sync-action@v0.5.0
+        uses: jakejarvis/aws-cli-action@1.2.0
         with:
-          args: --acl public-read --delete
+          args: s3 sync build/ s3://test-static-site-s3-bucket/ --delete
         env:
-          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: us-east-2

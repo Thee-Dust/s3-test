@@ -1,4 +1,4 @@
-name: Build and Deploy
+name: Deploy on Merge to Main
 
 on:
   push:
@@ -25,10 +25,10 @@ jobs:
         run: npm run build
 
       - name: Deploy to S3
-        uses: jakejarvis/aws-cli-action@1.2.0
+        uses: jakejarvis/s3-sync-action@v0.5.0
         with:
-          args: s3 sync build/ s3://test-static-site-s3-bucket/ --delete
+          args: --acl public-read --delete
         env:
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: us-east-2
